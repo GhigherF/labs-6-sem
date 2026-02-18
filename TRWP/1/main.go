@@ -12,7 +12,6 @@ type PostRequestData struct {
 	X  float32 `json:"x"`
 	Y  float32 `json:"y"`
 }
-
 type GetResponseData struct {
 	Op     string  `json:"op"`
 	X      float32 `json:"x"`
