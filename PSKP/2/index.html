@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>GET:</h1>
+   <div style="background-color:gainsboro; width:400px" id="GET">
+    <script>
+        let teachers=[];
+        fetch("http://localhost:2280/api/teachers").then(x=>x.json()).then(x=>{teachers=x;console.log(teachers)
+        teachers.map(teacher=>{document.getElementById("GET").innerHTML+=`<p>${teacher.teacher}\t\t\t\t\t\t\t${teacher.teacher_name}\t\t\t\t\t\t\t${teacher.pulpit}</p>`})
+        });
+    </script>
+   </div>
+   <h1>Delete:</h1>
+   <p id="deleteError" style="color: red;"></p>
+   <p id="deleteSucess" style="color: green;"></p>
+
+   <input id="inputField"/>
+   <script>
+    function Delete()
+    {
+        let param =document.getElementById("inputField").value;
+        console.log(param);
+        fetch(`http://localhost:2280/api/teachers/${param}`,{method:"DELETE"})
+        .then(x=>x.json()).then(x=>{console.log(x);if (x.error!=undefined)document.getElementById("deleteError").innerText=`${x.error}` 
+        else document.getElementById("deleteSucess").innerText=`${x.message}`})
+        .catch(x=>console.log(x)); 
+    }
+   </script>
+   <button onclick="Delete()">Delete</button>
+
+   <h1>Put:</h1>
+   <p id="PutError" style="color: red;"></p>
+   <p id="PutSucess" style="color: green;"></p>
+   <h3 style="word-spacing: 120px;">teacher teacher_name  pulpit</h3>
+    <input id="teacher">   
+    <input id="teacher_name">   
+    <input id="pulpit">   
+    <button onclick="Put()">PUT</button>
+
+   <script>
+    function Put()
+    {
+    let Teacher = document.getElementById("teacher").value;
+    let Teacher_name = document.getElementById("teacher_name").value;
+    let Pulpit = document.getElementById("pulpit").value;
+        if (Teacher==""||Teacher_name==""||Pulpit=="")document.getElementById("PutError").innerText="Введите все поля"
+        else{
+            fetch(`http://localhost:2280/api/teachers/${Teacher}`,
+            {method:"PUT",body:JSON.stringify({"teacher":Teacher,"teacher_name":Teacher_name,"pulpit":Pulpit})})
+           .then(x=>x.json()).then(x=>{console.log(x);if (x.error!=undefined)document.getElementById("PutError").innerText=`${x.error}` 
+        else document.getElementById("PutSucess").innerText=`Изменено успешно`})
+        .catch(x=>console.log(x));    
+        }
+}
+   </script>
+
+
+   <h1>Post:</h1>
+   <p id="PostError" style="color: red;"></p>
+   <p id="PostSucess" style="color: green;"></p>
+   <h3 style="word-spacing: 120px;">teacher teacher_name  pulpit</h3>
+   <input id="post_teacher">   
+   <input id="post_teacher_name">   
+   <input id="post_pulpit">   
+   <button onclick="Post()">POST</button>
+
+   <script>
+    function Post()
+    {
+    let Teacher = document.getElementById("post_teacher").value;
+    let Teacher_name = document.getElementById("post_teacher_name").value;
+    let Pulpit = document.getElementById("post_pulpit").value;
+        if (Teacher==""||Teacher_name==""||Pulpit=="")document.getElementById("PostError").innerText="Введите все поля"
+        else{
+            fetch(`http://localhost:2280/api/teachers`,
+            {method:"POST",
+             headers:{"Content-Type":"application/json"},
+             body:JSON.stringify({"teacher":Teacher,"teacher_name":Teacher_name,"pulpit":Pulpit})})
+           .then(x=>x.json()).then(x=>{console.log(x);
+            if (x.error!=undefined)document.getElementById("PostError").innerText=`${x.error}` 
+            else {
+                document.getElementById("PostSucess").innerText=`Добавлено успешно`;
+            
+                document.getElementById("post_teacher").value="";
+                document.getElementById("post_teacher_name").value="";
+                document.getElementById("post_pulpit").value="";
+                
+            }})
+        .catch(x=>console.log(x));    
+        }
+    }
+   </script>
+
+</body>
+</html>

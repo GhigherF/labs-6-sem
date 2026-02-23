@@ -23,6 +23,19 @@ func main() {
 	var JSON *PostRequestData
 
 	var server = chi.NewRouter()
+	server.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodOptions {
+				w.Header().Set("Access-Control-Allow-Origin", "*")
+				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	})
+
 	server.Get("/NGINX-test", func(w http.ResponseWriter, r *http.Request) {
 		if JSON != nil {
 			var response GetResponseData
@@ -41,19 +54,26 @@ func main() {
 				response.Result = JSON.X / JSON.Y
 			}
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(200)
 			json.NewEncoder(w).Encode(response)
 		} else {
-			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(404)
-			w.Write([]byte("JSON не найден на сервере"))
+			json.NewEncoder(w).Encode(struct {
+				Error string `json:"error"`
+			}{Error: "JSON не найден на сервере"})
 		}
 	})
 	server.Post("/NGINX-test", func(w http.ResponseWriter, r *http.Request) {
 		if JSON != nil {
 			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(409)
-			w.Write([]byte("JSON уже хранится на сервере"))
+			json.NewEncoder(w).Encode(struct {
+				Error string `json:"error"`
+			}{Error: "JSON уже хранится на сервере"})
 		} else {
 			var temp PostRequestData
 			json.NewDecoder(r.Body).Decode(&temp)
@@ -62,14 +82,18 @@ func main() {
 				{
 					JSON = &temp
 					w.Header().Set("Content-Type", "application/json")
+					w.Header().Set("Access-Control-Allow-Origin", "*")
 					w.WriteHeader(200)
 					json.NewEncoder(w).Encode(JSON)
 				}
 			default:
 				{
 					w.Header().Set("Content-Type", "text/plain")
+					w.Header().Set("Access-Control-Allow-Origin", "*")
 					w.WriteHeader(403)
-					w.Write([]byte("Неверная операция"))
+					json.NewEncoder(w).Encode(struct {
+						Error string `json:"error"`
+					}{Error: "Неверная операция"})
 				}
 			}
 		}
@@ -82,33 +106,47 @@ func main() {
 			case "add", "mul", "div", "sub":
 				{
 					w.Header().Set("Content-Type", "application/json")
+					w.Header().Set("Access-Control-Allow-Origin", "*")
 					w.WriteHeader(200)
 					JSON = &response
 					json.NewEncoder(w).Encode(response)
 				}
 			default:
 				{
-					w.Header().Set("Content-Type", "text/plain")
+					w.Header().Set("Content-Type", "application/json")
+					w.Header().Set("Access-Control-Allow-Origin", "*")
 					w.WriteHeader(403)
-					w.Write([]byte("Неверная операция"))
+					json.NewEncoder(w).Encode(struct {
+						Error string `json:"error"`
+					}{Error: "Неверная операция"})
+
 				}
 			}
 		} else {
 			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(404)
-			w.Write([]byte("JSON не найден на сервере"))
+			json.NewEncoder(w).Encode(struct {
+				Error string `json:"error"`
+			}{Error: "JSON не найден на сервере"})
 		}
 	})
 	server.Delete("/NGINX-test", func(w http.ResponseWriter, r *http.Request) {
 		if JSON != nil {
 			JSON = nil
-			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(200)
-			w.Write([]byte("JSON успешно удалён"))
+			json.NewEncoder(w).Encode(struct {
+				Message string `json:"message"`
+			}{Message: "Json успешно удалён"})
 		} else {
-			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.WriteHeader(404)
-			w.Write([]byte("JSON не найден на сервере"))
+			json.NewEncoder(w).Encode(struct {
+				Error string `json:"error"`
+			}{Error: "Json не найден на сервере"})
 		}
 	})
 

@@ -1,0 +1,11 @@
+#results 
+{
+    background-color: gainsboro;
+    width:200px;
+  
+}
+input,select
+{
+    margin:2px;
+    width:50px;
+}

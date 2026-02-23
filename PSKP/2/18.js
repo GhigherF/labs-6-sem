@@ -1,4 +1,5 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, where } = require('sequelize');
+const fs = require('fs')
 const http = require("http");
 const sequelize = new Sequelize('belstu', 'nodeuser', 'StrongPass123!', {
   dialect: 'mssql',
@@ -8,6 +9,12 @@ const sequelize = new Sequelize('belstu', 'nodeuser', 'StrongPass123!', {
     options: {
       encrypt: false,
       trustServerCertificate: true
+    },
+    pool:{
+      max:2,
+      min:1,
+      acquire:30000,
+      idle:10000
     }
   },
   logging: false
@@ -20,6 +27,7 @@ class Pulpit extends Model{};
 class Subject extends Model{};
 class Auditorium extends Model{};
 class Auditorium_type extends Model{};
+class Teacher extends Model{};
 
 
 
@@ -72,6 +80,19 @@ modelName:"Auditorium",
 tableName:"Auditorium",
 timestamps:false
 })
+Teacher.init({
+  teacher:{type:Sequelize.STRING,allowNull:false,primaryKey:true},
+  teacher_name:{type:Sequelize.STRING,allowNull:false},
+  pulpit:{type:Sequelize.STRING,allowNull:false,references:{model:Pulpit,key:"pulpit"}}
+},{
+sequelize,
+modelName:"Teacher",
+tableName:"Teacher",
+timestamps:false
+})
+
+
+
 
 async function GetHandle(request,response)
 {
@@ -126,6 +147,23 @@ Auditoriums.map(auditorium=>{
 console.log(Auditoriums);
 response.end(JSON.stringify(Auditoriums))
 }
+else if (request.url == "/api/teachers"){
+response.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
+let Teachers =[];
+await Teacher.findAll().then(teachers=>teachers.map(teacher=> Teachers.push(teacher.dataValues)));  
+Teachers.map(teacher=>{
+  teacher.teacher =teacher.teacher.trim();
+  teacher.pulpit = teacher.pulpit.trim();
+});
+console.log(Teachers);
+response.end(JSON.stringify(Teachers))
+}
+else if(request.url == "/")
+{
+ let file = fs.readFileSync("index.html");
+ response.writeHead(200, {"Content-Type":"text/html; charset=utf-8"}); 
+ response.end(file); 
+}
 else
   {
     response.writeHead(404, {"Content-Type":"application/json; charset=utf-8"});
@@ -136,7 +174,7 @@ async function PostHandle(request,response)
 {
   let data = "";
   request.on("data",chunk=>data+=chunk);
-  
+
   request.on("end",()=>
   {
     data = JSON.parse(data);
@@ -191,6 +229,22 @@ async function PostHandle(request,response)
       .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
       response.end(JSON.stringify({"error":err.message.toString()})
     )})}
+    else if (request.url == "/api/teachers")
+    {
+      Teacher.create(data).then(teacher =>{
+      teacher.dataValues.teacher =teacher.dataValues.teacher.trim();
+      teacher.dataValues.teacher_name =teacher.dataValues.teacher_name.trim();
+      teacher.dataValues.pulpit =teacher.dataValues.pulpit.trim();
+      response.writeHead(201, {"Content-Type":"application/json; charset=utf-8"});
+      response.end(JSON.stringify(teacher.dataValues))})
+      .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+      response.end(JSON.stringify({"error":err.message.toString()})
+    )})}
+  else
+  {
+    response.writeHead(404, {"Content-Type":"application/json; charset=utf-8"});
+    response.end(JSON.stringify({"error":"Неправильный URI"}));
+  };
 
 
 
@@ -223,8 +277,204 @@ async function DeleteHandle(request,response)
         response.end("Удалено успешно")}})
         .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
         response.end(JSON.stringify({"error":err.message.toString()}) )})
+    } 
+    else if (path == "api/pulpits")
+    {
+        Pulpit.destroy({where:{pulpit:param}}).then((count)=>{
+          if (count==0)
+          {
+            response.writeHead(400, {"Content-type":"application/json"});
+            response.end(JSON.stringify({"error":"Кафедра не найдена"}))
+          }
+          else {
+        response.writeHead(202,{"Content-type":"text/plain"});
+        response.end("Удалено успешно")}})
+        .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error":err.message.toString()}) )})
     }
+    else if (path == "api/subjects")
+    {
+        Subject.destroy({where:{subject:param}}).then((count)=>{
+          if (count==0)
+          {
+            response.writeHead(400, {"Content-type":"application/json"});
+            response.end(JSON.stringify({"error":"Предмет не найдена"}))
+          }
+          else {
+        response.writeHead(202,{"Content-type":"text/plain"});
+        response.end("Удалено успешно")}})
+        .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error":err.message.toString()}) )})
+    }
+    else if (path == "api/auditoriumstypes")
+    {
+        Auditorium_type.destroy({where:{auditorium_type:param}}).then((count)=>{
+          if (count==0)
+          {
+            response.writeHead(400, {"Content-type":"application/json"});
+            response.end(JSON.stringify({"error":"Неверный тип аудитории"}))
+          }
+          else {
+        response.writeHead(202,{"Content-type":"text/plain"});
+        response.end("Удалено успешно")}})
+        .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error":err.message.toString()}) )})
+    }
+    else if (path == "api/auditoriums")
+    {
+        Auditorium.destroy({where:{auditorium:param}}).then((count)=>{
+          if (count==0)
+          {
+            response.writeHead(400, {"Content-type":"application/json"});
+            response.end(JSON.stringify({"error":"Неверная аудитория"}))
+          }
+          else {
+        response.writeHead(202,{"Content-type":"text/plain"});
+        response.end("Удалено успешно")}})
+        .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error":err.message.toString()}) )})
+    }
+    else if (path == "api/teachers")
+    {
+        Teacher.destroy({where:{teacher:param}}).then((count)=>{
+          if (count==0)
+          {
+            response.writeHead(400, {"Content-type":"application/json"});
+            response.end(JSON.stringify({"error":"Неверный преподаватель"}))
+          }
+          else {
+        response.writeHead(202,{"Content-type":"application/json"});
+        response.end(JSON.stringify({"message":"Удалено успешно"}))
+      }})
+        .catch(err=>{response.writeHead(400, {"Content-Type":"application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error":err.message.toString()}) )})
+    }
+  else
+  {
+    response.writeHead(404, {"Content-Type":"application/json; charset=utf-8"});
+    response.end(JSON.stringify({"error":"Неправильный URI"}));
+  };
+
   }
+}
+async function PutHandle(request, response) {
+  let param;
+  if ((param = decodeURIComponent(request.url).split('/')[3]) == undefined) {
+    response.writeHead(200, {"Content-type": "application/json"});
+    response.end(JSON.stringify({"error": "неверный URI"}));
+    return;
+  }
+  
+  let data = "";
+  let path = `${request.url.split('/')[1]}/${request.url.split('/')[2]}`;
+  
+  request.on("data", chunk => data += chunk);
+  request.on("end", () => {
+    data = JSON.parse(data);
+    console.log(data);
+    
+    if (path == "api/faculties") {
+      Faculty.update(data, {where: {faculty: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "text/plain"});
+          response.end("Не найдено ни одной строки для обновления");
+        } else {
+          data.faculty = data.faculty.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"faculty":data.faculty,"faculty_name":data.faculty_name}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}   
+else if (path == "api/pulpits") {
+      Pulpit.update(data, {where: {pulpit: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "text/plain"});
+          response.end("Не найдено ни одной строки для обновления");
+        } else {
+          data.pulpit = data.pulpit.trim();
+          data.faculty = data.faculty.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"pulpit":data.pulpit,"faculty":data.faculty,"pulpit_name":data.pulpit_name}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}
+else if (path == "api/subjects") {
+      Subject.update(data, {where: {subject: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "text/plain"});
+          response.end("Не найдено ни одной строки для обновления");
+        } else {
+          data.subject = data.subject.trim();
+          data.pulpit = data.pulpit.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"subject":data.subject,"subject_name":data.subject_name,"pulpit":data.pulpit}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}
+else if (path == "api/auditoriumstypes") {
+      Auditorium_type.update(data, {where: {auditorium_type: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "text/plain"});
+          response.end("Не найдено ни одной строки для обновления");
+        } else {
+          data.auditorium_type = data.auditorium_type.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"auditorium_type":data.auditorium_type,"auditorium_typename":data.auditorium_typename}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}
+else if (path == "api/auditoriums") {
+      Auditorium.update(data, {where: {auditorium: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "text/plain"});
+          response.end("Не найдено ни одной строки для обновления");
+        } else {
+          data.auditorium = data.auditorium.trim();
+          data.auditorium_name = data.auditorium_name.trim();
+          data.auditorium_type = data.auditorium_type.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"auditorium":data.auditorium,"auditorium_name":data.auditorium_name,"auditorium_capacity":data.auditorium_capacity,"auditorium_type:":data.auditorium_type}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}
+else if (path == "api/teachers") {
+      Teacher.update(data, {where: {teacher: param}}).then((count) => {
+        if (count == 0) {
+          response.writeHead(400, {"Content-type": "application/json"});
+          response.end(JSON.stringify({"error":"Не найдено ни одной строки для обновления"}));
+        } else {
+          data.teacher = data.teacher.trim();
+          data.pulpit = data.pulpit.trim();
+          response.writeHead(201, {"Content-Type": "application/json; charset=utf-8"}); 
+          response.end(JSON.stringify({"teacher":data.teacher,"teacher_name":data.teacher_name,"pulpit":data.pulpit}));
+        }
+      })
+      .catch(err => {
+        response.writeHead(400, {"Content-Type": "application/json; charset=utf-8"});
+        response.end(JSON.stringify({"error": err.message.toString()}
+      ));
+});}
+}); 
 }
 
 
@@ -239,6 +489,7 @@ server.on("request",async (request,response)=>
     case "GET": GetHandle(request,response);break;
     case "POST": PostHandle(request,response);break;
     case "DELETE": DeleteHandle(request, response);break;
+    case "PUT":PutHandle(request, response);
   }
    
 });}
@@ -246,12 +497,12 @@ server.on("request",async (request,response)=>
 
 sequelize.authenticate()
   .then(() => {
-    console.log('✅ Подключение к SQL Server Express успешно!')
+    console.log('Успешное подключение!')
     let server = http.createServer();
     server.listen(2280);
     RequestHandler(server);    
   })
-  .catch(err => {console.error('❌ Ошибка подключения:', err);sequelize.close()});
+  .catch(err => {console.error('Ошибка подключения:', err);sequelize.close()});
 
 
   
