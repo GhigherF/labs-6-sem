@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демо - Телефонный справочник</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .contact-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .contact-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .contact-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .form-group {
+            margin: 20px 0;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Главная страница -->
+        <div id="mainPage">
+            <h1>Телефонный справочник</h1>
+            <div id="contactsList"></div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="showAddPage()">Добавить</button>
+            </div>
+        </div>
+
+        <!-- Страница добавления -->
+        <div id="addPage" class="hidden">
+            <h1>Добавить контакт</h1>
+            <div id="contactsListAdd"></div>
+            <div class="form-group">
+                <input type="text" id="addName" placeholder="Имя" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" id="addPhone" placeholder="Телефон" required>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="addContact()">Добавить</button>
+                <button class="btn btn-cancel" onclick="showMainPage()">Отказаться</button>
+            </div>
+        </div>
+
+        <!-- Страница изменения -->
+        <div id="updatePage" class="hidden">
+            <h1>Изменить контакт</h1>
+            <div id="contactsListUpdate"></div>
+            <div class="form-group">
+                <input type="text" id="updateName" placeholder="Имя" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" id="updatePhone" placeholder="Телефон" required>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="updateContact()">Изменить</button>
+                <button class="btn btn-cancel" onclick="showMainPage()">Отказаться</button>
+            </div>
+            <div class="actions">
+                <button class="btn btn-danger" id="deleteBtn" onclick="deleteContact()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // База данных контактов
+        let contacts = [
+            { id: 1, name: "Иван Иванов", phone: "+375291234567" },
+            { id: 2, name: "Петр Петров", phone: "+375297654321" },
+            { id: 3, name: "Мария Сидорова", phone: "+375333456789" }
+        ];
+        
+        let selectedContactId = null;
+        let nextId = 4;
+
+        // Отображение списка контактов
+        function renderContacts(containerId, clickable = true) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            contacts.forEach(contact => {
+                const btn = document.createElement('button');
+                btn.className = 'contact-btn';
+                btn.textContent = `${contact.name} - ${contact.phone}`;
+                
+                if (clickable) {
+                    btn.onclick = () => showUpdatePage(contact.id);
+                } else {
+                    btn.disabled = true;
+                }
+                
+                container.appendChild(btn);
+            });
+        }
+
+        // Показать главную страницу
+        function showMainPage() {
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('addPage').classList.add('hidden');
+            document.getElementById('updatePage').classList.add('hidden');
+            renderContacts('contactsList', true);
+        }
+
+        // Показать страницу добавления
+        function showAddPage() {
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('addPage').classList.remove('hidden');
+            document.getElementById('updatePage').classList.add('hidden');
+            renderContacts('contactsListAdd', false);
+            document.getElementById('addName').value = '';
+            document.getElementById('addPhone').value = '';
+        }
+
+        // Показать страницу изменения
+        function showUpdatePage(id) {
+            selectedContactId = id;
+            const contact = contacts.find(c => c.id === id);
+            
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('addPage').classList.add('hidden');
+            document.getElementById('updatePage').classList.remove('hidden');
+            
+            renderContacts('contactsListUpdate', false);
+            
+            const nameInput = document.getElementById('updateName');
+            const phoneInput = document.getElementById('updatePhone');
+            nameInput.value = contact.name;
+            phoneInput.value = contact.phone;
+            nameInput.defaultValue = contact.name;
+            
+            document.getElementById('deleteBtn').disabled = false;
+        }
+
+        // Добавить контакт
+        function addContact() {
+            const name = document.getElementById('addName').value.trim();
+            const phone = document.getElementById('addPhone').value.trim();
+            
+            if (!name || !phone) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            contacts.push({
+                id: nextId++,
+                name: name,
+                phone: phone
+            });
+            
+            showMainPage();
+        }
+
+        // Обновить контакт
+        function updateContact() {
+            const name = document.getElementById('updateName').value.trim();
+            const phone = document.getElementById('updatePhone').value.trim();
+            
+            if (!name || !phone) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            const contact = contacts.find(c => c.id === selectedContactId);
+            if (contact) {
+                contact.name = name;
+                contact.phone = phone;
+            }
+            
+            showMainPage();
+        }
+
+        // Удалить контакт
+        function deleteContact() {
+            contacts = contacts.filter(c => c.id !== selectedContactId);
+            showMainPage();
+        }
+
+        // Блокировка кнопки удаления при вводе
+        document.addEventListener('DOMContentLoaded', function() {
+            const updateNameInput = document.getElementById('updateName');
+            const deleteBtn = document.getElementById('deleteBtn');
+            
+            updateNameInput.addEventListener('input', function() {
+                if (this.value.trim() !== this.defaultValue.trim()) {
+                    deleteBtn.disabled = true;
+                } else {
+                    deleteBtn.disabled = false;
+                }
+            });
+        });
+
+        // Инициализация
+        showMainPage();
+    </script>
+</body>
+</html>
