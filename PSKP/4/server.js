@@ -4,9 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-// Настройка Handlebars
 app.engine('handlebars', engine({
     defaultLayout: 'main',
     helpers: {
@@ -17,15 +16,12 @@ app.engine('handlebars', engine({
 }));
 app.set('view engine', 'handlebars');
 app.set('views', './views');
-
-// Middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const PHONEBOOK_FILE = path.join(__dirname, 'phonebook.json');
 
-// Функции работы с JSON
 function readPhonebook() {
     const data = fs.readFileSync(PHONEBOOK_FILE, 'utf8');
     return JSON.parse(data);
@@ -35,7 +31,6 @@ function writePhonebook(data) {
     fs.writeFileSync(PHONEBOOK_FILE, JSON.stringify(data, null, 2));
 }
 
-// GET:/ - Главная форма
 app.get('/', (req, res) => {
     const phonebook = readPhonebook();
     res.render('index', { 
@@ -44,7 +39,6 @@ app.get('/', (req, res) => {
     });
 });
 
-// GET:/Add - Форма добавления
 app.get('/Add', (req, res) => {
     const phonebook = readPhonebook();
     res.render('add', { 
@@ -53,7 +47,6 @@ app.get('/Add', (req, res) => {
     });
 });
 
-// GET:/Update - Форма обновления
 app.get('/Update', (req, res) => {
     const phonebook = readPhonebook();
     const id = parseInt(req.query.id);
@@ -66,7 +59,6 @@ app.get('/Update', (req, res) => {
     });
 });
 
-// POST:/Add - Добавление записи
 app.post('/Add', (req, res) => {
     const phonebook = readPhonebook();
     const newContact = {
@@ -79,7 +71,6 @@ app.post('/Add', (req, res) => {
     res.redirect('/');
 });
 
-// POST:/Update - Обновление записи
 app.post('/Update', (req, res) => {
     const phonebook = readPhonebook();
     const id = parseInt(req.body.id);
@@ -93,7 +84,6 @@ app.post('/Update', (req, res) => {
     res.redirect('/');
 });
 
-// POST:/Delete - Удаление записи
 app.post('/Delete', (req, res) => {
     const phonebook = readPhonebook();
     const id = parseInt(req.body.id);

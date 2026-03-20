@@ -7,19 +7,10 @@
 <form method="POST" action="/Update">
     <input type="hidden" name="id" value="{{selectedContact.id}}">
     <div class="form-group">
-        <input type="text" 
-               id="updateInput" 
-               name="name" 
-               value="{{selectedContact.name}}" 
-               placeholder="Имя" 
-               required>
+        <input type="text" id="updateInput" name="name" value="{{selectedContact.name}}" placeholder="ФИО" required>
     </div>
     <div class="form-group">
-        <input type="tel" 
-               name="phone" 
-               value="{{selectedContact.phone}}" 
-               placeholder="Телефон" 
-               required>
+        <input type="tel" name="phone" value="{{selectedContact.phone}}" placeholder="Телефон" required>
     </div>
     <div class="actions">
         <button type="submit" class="btn btn-primary">Изменить</button>
