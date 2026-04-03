@@ -20,12 +20,12 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const PHONEBOOK_FILE = path.join(__dirname, 'phonebook.json');
+const PHONEBOOK_FILE = path.join(__dirname, 'public/phonebook.json');
 
 function readPhonebook() {
     const data = fs.readFileSync(PHONEBOOK_FILE, 'utf8');
     return JSON.parse(data);
-}
+}   
 
 function writePhonebook(data) {
     fs.writeFileSync(PHONEBOOK_FILE, JSON.stringify(data, null, 2));
@@ -82,6 +82,10 @@ app.post('/Update', (req, res) => {
         writePhonebook(phonebook);
     }
     res.redirect('/');
+});
+
+app.get('/api/phonebook', (req, res) => {
+    res.json(readPhonebook());
 });
 
 app.post('/Delete', (req, res) => {

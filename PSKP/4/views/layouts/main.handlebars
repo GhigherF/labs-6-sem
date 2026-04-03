@@ -142,17 +142,18 @@
     
     <script>
         const updateInput = document.getElementById('updateInput');
+        const phoneInput = document.getElementById('phoneInput');
         const deleteBtn = document.getElementById('deleteBtn');
         
-        if (updateInput && deleteBtn) {
-            updateInput.addEventListener('input', function() {
-                if (this.value.trim() !== this.defaultValue.trim()) {
-                    deleteBtn.disabled = true;
-                } else {
-                    deleteBtn.disabled = false;
-                }
-            });
+        function checkChanged() {
+            if (!deleteBtn) return;
+            const nameChanged = updateInput && updateInput.value.trim() !== updateInput.defaultValue.trim();
+            const phoneChanged = phoneInput && phoneInput.value.trim() !== phoneInput.defaultValue.trim();
+            deleteBtn.disabled = nameChanged || phoneChanged;
         }
+        
+        if (updateInput) updateInput.addEventListener('input', checkChanged);
+        if (phoneInput) phoneInput.addEventListener('input', checkChanged);
     </script>
 </body>
 </html>

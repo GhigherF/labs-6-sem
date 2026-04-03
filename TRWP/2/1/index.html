@@ -1,63 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link  rel="stylesheet" href="2.css"/>
-    <script src="2.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ API Console</title>
+  <link rel="stylesheet" href="2.css"/>
+  <script src="2.js" defer></script>
 </head>
 <body>
-    <h1>Get:</h1>
+<div class="container">
+  <h1 class="page-title">⚡ API CONSOLE</h1>
+
+  <div class="card card-get">
+    <h1>📡 GET</h1>
     <p id="Get"></p>
-<div id="results">
-  
+    <div id="results"></div>
+    <div class="form-row" style="margin-top:12px">
+      <button class="btn-get" onclick="Get()">GET</button>
+    </div>
+  </div>
+
+  <div class="card card-post">
+    <h1>📤 POST</h1>
+    <p id="Post"></p>
+    <div class="form-row">
+      <input type="number" id="X" placeholder="X"/>
+      <input type="number" id="Y" placeholder="Y"/>
+      <select id="Op">
+        <option>add</option><option>sub</option><option>mul</option><option>div</option>
+      </select>
+      <button class="btn-post" onclick="Post()">POST</button>
+    </div>
+  </div>
+
+  <div class="card card-put">
+    <h1>✏️ PUT</h1>
+    <p id="Put"></p>
+    <div class="form-row">
+      <input type="number" id="PutX" placeholder="X"/>
+      <input type="number" id="PutY" placeholder="Y"/>
+      <select id="PutOp">
+        <option>add</option><option>sub</option><option>mul</option><option>div</option>
+      </select>
+      <button class="btn-put" onclick="Put()">PUT</button>
+    </div>
+  </div>
+
+  <div class="card card-delete">
+    <h1>💥 DELETE</h1>
+    <p id="Delete"></p>
+    <div class="form-row">
+      <button class="btn-delete" onclick="Delete()">DELETE</button>
+    </div>
+  </div>
 </div>
 
-<button onclick="Get()">Get</button>
+<!-- RICARDO LEFT -->
+<div class="ricardo ricardo-left">
+  <div class="ric">
+    <div class="row"><span class="p wh"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p wh"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p sk"></span><span class="p sk"></span><span class="p sk"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p ey"></span><span class="p sk"></span><span class="p ey"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p sk"></span><span class="p mo"></span><span class="p sk"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p wh"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p wh"></span></div>
+    <div class="row"><span class="p wh"></span><span class="p wh"></span><span class="p sk"></span><span class="p sk"></span><span class="p wh"></span><span class="p wh"></span></div>
+    <div class="ric-torso">
+      <div class="ric-arm-l">
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+      </div>
+      <div class="ric-arm-r">
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+      </div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span></div>
+    </div>
+    <div class="ric-legs">
+      <div class="ric-leg-l">
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p so"></span><span class="p so"></span></div>
+      </div>
+      <div class="ric-leg-r">
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p so"></span><span class="p so"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<h1>Post:</h1>
-<p id="Post"></p>
-
-<input type="number" id="X">
-<input type="number" id="Y">
-<select id="Op">
-<option>add</option>
-<option>sub</option>
-<option>mul</option>
-<option>div</option>
-</select>
-<button onclick="Post()">POST</button>
-
-<h1>Put:</h1>
-<p id="Put"></p>
-<input type="number" id="PutX">
-<input type="number" id="PutY">
-<select id="PutOp">
-<option>add</option>
-<option>sub</option>
-<option>mul</option>
-<option>div</option>
-</select>
-<button onclick="Put()">PUT</button>
-
-<h1>Delete:</h1>
-<p id="Delete"></p>
-<button onclick="Delete()">DELETE</button>
-
-
-
+<!-- RICARDO RIGHT -->
+<div class="ricardo ricardo-right">
+  <div class="ric">
+    <div class="row"><span class="p wh"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p wh"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p sk"></span><span class="p sk"></span><span class="p sk"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p ey"></span><span class="p sk"></span><span class="p ey"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p hr"></span><span class="p sk"></span><span class="p sk"></span><span class="p mo"></span><span class="p sk"></span><span class="p hr"></span></div>
+    <div class="row"><span class="p wh"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p hr"></span><span class="p wh"></span></div>
+    <div class="row"><span class="p wh"></span><span class="p wh"></span><span class="p sk"></span><span class="p sk"></span><span class="p wh"></span><span class="p wh"></span></div>
+    <div class="ric-torso">
+      <div class="ric-arm-l">
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+      </div>
+      <div class="ric-arm-r">
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sh"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+        <div class="row"><span class="p sk"></span></div>
+      </div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span><span class="p sh"></span></div>
+      <div class="row"><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span><span class="p be"></span></div>
+    </div>
+    <div class="ric-legs">
+      <div class="ric-leg-l">
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p so"></span><span class="p so"></span></div>
+      </div>
+      <div class="ric-leg-r">
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p pt"></span><span class="p pt"></span></div>
+        <div class="row"><span class="p so"></span><span class="p so"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

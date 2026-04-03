@@ -1,0 +1,97 @@
+CREATE TABLE FACULTIES(
+faculty_id INT IDENTITY(1,1) PRIMARY KEY,
+faculty VARCHAR(10) NOT NULL UNIQUE,
+faculty_name VARCHAR(120) NOT NULL UNIQUE,
+dean VARCHAR(150) NOT NULL UNIQUE
+)
+--DROP TABLE FACULTIES
+
+
+CREATE TABLE PULPITS(
+pulpit_id INT IDENTITY(1,1) PRIMARY KEY,
+faculty_id INT,
+pulpit VARCHAR(120) NOT NULL UNIQUE,
+head_of_pulpit VARCHAR(150) NOT NULL UNIQUE
+FOREIGN KEY(faculty_id) REFERENCES FACULTIES(faculty_id)
+)
+--DROP TABLE PULPITS
+
+CREATE TABLE SPECIALTIES(
+specialty_id INT IDENTITY(1,1) PRIMARY KEY,
+specialty VARCHAR(150),
+years_of_study INT NOT NULL,
+degree VARCHAR(50) NOT NULL,
+pulpit_id INT,
+FOREIGN KEY (pulpit_id) REFERENCES PULPITS(pulpit_id)
+)
+--DROP TABLE SPECIALTIES
+
+CREATE TABLE SUBJECTS(
+subject_id INT IDENTITY(1,1) PRIMARY KEY,
+subject VARCHAR(150) NOT NULL,
+pulpit_id INT,
+FOREIGN KEY(pulpit_id) REFERENCES PULPITS(pulpit_id)
+)
+--DROP TABLE subjects
+
+CREATE TABLE TEACHERS(
+teacher_id int IDENTITY(1,1) PRIMARY KEY,
+teacher VARCHAR(150) NOT NULL,
+position VARCHAR(75) NOT NULL,
+pulpit_id int,
+FOREIGN KEY(pulpit_id) REFERENCES PULPITS(pulpit_id)
+)
+--DROP TABLE teachers
+
+
+CREATE TABLE SUBJECT_TEACHER(
+teacher_id INT NOT NULL,
+subject_id INT NOT NULL,
+PRIMARY KEY(teacher_id,subject_id),
+FOREIGN KEY(teacher_id) REFERENCES TEACHERS(teacher_id),
+FOREIGN KEY(subject_id) REFERENCES SUBJECTS(subject_id)
+)
+--DROP TABLE SUBJECT_TEACHER;
+
+CREATE TABLE STUDENTS(
+student_id INT IDENTITY(1,1) PRIMARY KEY,
+student	VARCHAR(150) NOT NULL,
+specialty_id INT,
+course INT NOT NULL,
+grup INT NOT NULL,
+subgroup INT NOT NULL,
+FOREIGN KEY(specialty_id) REFERENCES SPECIALTIES(specialty_id)
+)
+--DROP TABLE STUDENTS;
+
+
+CREATE TABLE EXAMS(
+exam_id INT IDENTITY(1,1) PRIMARY KEY,
+exam_date DateTime NOT NULL,
+exam_auditorium VARCHAR(15) NOT NULL,
+teacher_id int,
+subject_id int,
+FOREIGN KEY(subject_id) REFERENCES SUBJECTS(subject_id),
+FOREIGN KEY(teacher_id) REFERENCES TEACHERS(teacher_id)
+)
+--DROP TABLE EXAMS
+
+CREATE TABLE GRADES(
+grade_id INT IDENTITY(1,1) NOT NULL,
+student_id INT,
+subject_id INT,
+grade INT,
+FOREIGN KEY(student_id) REFERENCES STUDENTS(student_id),
+FOREIGN KEY(subject_id) REFERENCES SUBJECTS(subject_id)
+)
+--DROP TABLE GRADES
+
+
+
+
+
+
+
+
+
+
