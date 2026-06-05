@@ -1,0 +1,244 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API для управления знаменитостями",
+        "title": "Celebrities API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:2280",
+    "basePath": "/",
+    "paths": {
+        "/celebrities": {
+            "post": {
+                "description": "Добавляет новую знаменитость",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "celebrities"
+                ],
+                "summary": "Создать знаменитость",
+                "parameters": [
+                    {
+                        "description": "Celebrity object",
+                        "name": "celebrity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.Celebrity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/main.Celebrity"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/celebrities/all": {
+            "get": {
+                "description": "Возвращает список всех знаменитостей",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "celebrities"
+                ],
+                "summary": "Получить всех знаменитостей",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/main.Celebrity"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/celebrities/{id}": {
+            "get": {
+                "description": "Возвращает одну знаменитость",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "celebrities"
+                ],
+                "summary": "Получить знаменитость по id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID знаменитости",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.Celebrity"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет знаменитость по id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "celebrities"
+                ],
+                "summary": "Обновить знаменитость",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID знаменитости",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Celebrity object",
+                        "name": "celebrity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.Celebrity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.Celebrity"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет знаменитость по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "celebrities"
+                ],
+                "summary": "Удалить знаменитость",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID знаменитости",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.Celebrity": {
+            "type": "object",
+            "properties": {
+                "fullName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nationality": {
+                    "type": "string"
+                },
+                "reqPhotoPath": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

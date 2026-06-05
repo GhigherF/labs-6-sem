@@ -1,0 +1,21 @@
+
+=== BLOCK 0 ===
+IN  : 496e666f726d6174
+E1  : b898c8d1cb909ab9
+E2  : 6938104a96c3a806
+E3  : a6c8daef8a52beaf
+OUT : a6c8daef8a52beaf
+
+=== BLOCK 1 ===
+IN  : 696f6e2073656375
+E1  : bf1d8f430cec23e0
+E2  : 1712358f8d3d8143
+E3  : ccf9d409d0a7cdc0
+OUT : ccf9d409d0a7cdc0
+
+=== BLOCK 2 ===
+IN  : 7269747920697320
+E1  : 7282d4e8cf89c9cf
+E2  : 04b50946e2377b4e
+E3  : e0130ca3319d39b5
+OUT : e0130ca3319d39b5

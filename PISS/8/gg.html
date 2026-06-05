@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p> WebSocket client started</p>
+<div id="output"></div>
+<script>
+    const socket = new WebSocket("ws://localhost:3000/ws");
+    const out = document.getElementById("output");
+    socket.onopen=()=>{
+    for (let i =1;i<=5;i++) {
+    setTimeout(()=>socket.send("form browser msg "+i),i*1000);}
+    setTimeout(()=>{socket.close(1000,"bye")},5500)
+    };
+    socket.onmessage = (e)=>{
+        const p = document.createElement("p");
+        p.textContent = "server: " + e.data;
+        out.appendChild(p)
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "lab10-api-testing",
+  "version": "1.0.0",
+  "description": "Лабораторная работа 10 — Тестирование API (JSONPlaceholder)",
+  "scripts": {
+    "test": "jest --verbose"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "axios": "^1.6.0"
+  }
+}

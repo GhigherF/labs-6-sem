@@ -170,3 +170,41 @@ BEGIN
     END LOOP;
     CLOSE v_cursor;
 END;
+
+
+
+
+
+
+
+----------------------------------
+---------------------------------
+CREATE OR REPLACE FUNCTION teachersByOverload(v_subjects IN NUMBER)
+RETURN SYS_REFCURSOR AS result_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN result_cursor FOR
+        SELECT teachers.teacher,COUNT(subject_teacher.subject_id) AS subjects_count
+        FROM teachers INNER JOIN subject_teacher 
+            ON teachers.teacher_id = subject_teacher.teacher_id
+        GROUP BY teachers.teacher
+        HAVING COUNT(subject_teacher.subject_id) > v_subjects;
+
+    RETURN result_cursor;
+END;
+
+
+
+
+
+DECLARE rc SYS_REFCURSOR; v_teacher teachers.teacher%TYPE;v_count NUMBER;
+BEGIN
+    rc := teachersByOverload(2);
+    LOOP
+        FETCH rc INTO v_teacher, v_count;
+        EXIT WHEN rc%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE(v_teacher || ' ---- ' || v_count||' предмета');
+    END LOOP;
+
+    CLOSE rc;
+END;

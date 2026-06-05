@@ -200,6 +200,59 @@ END;
 
 
 
+
+
+----------------------------------------------
+go
+
+CREATE OR ALTER PROCEDURE dataIntegrityCheck AS
+BEGIN
+
+    SELECT pulpits.pulpit FROM pulpits 
+    LEFT JOIN teachers  ON pulpits.pulpit_id = teachers.pulpit_id
+    WHERE teachers.teacher_id IS NULL;
+
+    SELECT subjects.subject FROM subjects 
+    LEFT JOIN subject_teacher ON subjects.subject_id = subject_teacher.subject_id
+    WHERE subject_teacher.teacher_id IS NULL;
+
+    SELECT teachers.teacher FROM teachers 
+    LEFT JOIN subject_teacher ON teachers.teacher_id = subject_teacher.teacher_id
+    WHERE subject_teacher.subject_id IS NULL;
+END;
+
+exec dataIntegrityCheck
+
+select * from teachers inner join pulpits
+on pulpits.pulpit_id = teachers.pulpit_id
+order by pulpits.pulpit
+
+
+----------------------------------------
+---------------------------------------
+
+CREATE OR ALTER PROCEDURE checkTeachersExamConflicts AS 
+BEGIN
+    IF EXISTS (SELECT * FROM exams e1
+               INNER JOIN exams e2 ON e1.teacher_id = e2.teacher_id
+               AND e1.exam_date = e2.exam_date AND e1.exam_id < e2.exam_id)
+    BEGIN
+    SELECT DISTINCT teachers.teacher, e1.exam_date
+        FROM exams e1
+        INNER JOIN exams e2 ON e1.teacher_id = e2.teacher_id
+           AND e1.exam_date = e2.exam_date
+           AND e1.exam_id < e2.exam_id
+        INNER JOIN teachers ON teachers.teacher_id = e1.teacher_id;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Конфликтов расписания не найдено';
+    END
+END;
+
+exec checkTeachersExamConflicts
+
+
 -----------------VIEW----------------
 go
 CREATE VIEW studentPerformanceView

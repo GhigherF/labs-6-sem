@@ -16,8 +16,8 @@ INSERT INTO FACULTIES (faculty, faculty_name, dean) VALUES
 ('ЛХ','Логистика','Попов В.В.'),
 ('ФЭ','Факультет экономики','Михайлова М.М.');
 
-
 INSERT INTO PULPITS (faculty_id, pulpit, head_of_pulpit) VALUES
+
 (1,'ТОВ-1','Смирнов А.А.'),
 (1,'ТОВ-2','Васильев В.В.'),
 (1,'ТОВ-Мат','Павлов П.П.'),

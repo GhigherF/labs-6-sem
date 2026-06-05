@@ -262,7 +262,82 @@ BEGIN
     END;
 END;
 
+-----------------------------------------------
+----------------------------------------------
+CREATE OR REPLACE PROCEDURE checkAllTeacherExamConflicts IS result_cursor SYS_REFCURSOR;
+    v_teacher teachers.teacher%TYPE;
+    v_exam_date exams.exam_date%TYPE;
+BEGIN
+    OPEN result_cursor FOR
+    SELECT DISTINCT teachers.teacher,e1.exam_date FROM exams e1
+        INNER JOIN exams e2 ON e1.teacher_id = e2.teacher_id
+           AND e1.exam_date = e2.exam_date
+           AND e1.exam_id < e2.exam_id
+        INNER JOIN teachers ON teachers.teacher_id = e1.teacher_id;
 
+    FETCH result_cursor INTO v_teacher, v_exam_date;
+
+    IF result_cursor%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Конфликтов расписания не найдено');
+        CLOSE result_cursor;
+        RETURN;
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Найдены конфликты расписания:');
+
+    CLOSE result_cursor;
+
+    LOOP
+        FETCH result_cursor INTO v_teacher, v_exam_date;
+        EXIT WHEN result_cursor%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE(v_teacher || ' -> ' || v_exam_date);
+    END LOOP;
+
+    CLOSE result_cursor;
+END;
+
+begin
+CHECKALLTEACHEREXAMCONFLICTS();
+end;
+-----------------------------------------------
+----------------------------------------------
+
+CREATE OR REPLACE PROCEDURE dataIntegrityCheck
+AS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Кафедры без преподавателей:');
+    FOR r IN (SELECT pulpits.pulpit
+        FROM pulpits
+        LEFT JOIN teachers ON pulpits.pulpit_id = teachers.pulpit_id
+        WHERE teachers.teacher_id IS NULL) 
+        LOOP
+        DBMS_OUTPUT.PUT_LINE(r.pulpit);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Предметы без преподавателей:');
+    FOR r IN (SELECT subjects.subject
+        FROM subjects 
+        LEFT JOIN subject_teacher  ON subjects.subject_id = subject_teacher.subject_id
+        WHERE subject_teacher.teacher_id IS NULL)
+        LOOP
+        DBMS_OUTPUT.PUT_LINE(r.subject);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Преподаватели без предметов:');
+    FOR r IN (SELECT teachers.teacher
+        FROM teachers 
+        LEFT JOIN subject_teacher   ON teachers.teacher_id = subject_teacher.teacher_id
+        WHERE subject_teacher.subject_id IS NULL
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE(r.teacher);
+    END LOOP;
+
+END;
+
+BEgin
+DATAINTEGRITYCHECK();
+end;
 
 
 -----------------VIEW----------------
@@ -320,7 +395,7 @@ CREATE SEQUENCE smelov_grade
 START WITH 1
 INCREMENT BY 1
 MINVALUE 1
-MAXVALUE 5
+MAXVALUE 4
 CYCLE
 NOCACHE;
 

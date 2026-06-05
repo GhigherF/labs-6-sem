@@ -41,11 +41,11 @@ function findPrimesInRange(start, end) {
 }
 
 
-console.log("НОД(521, 553) =", NOD2(521, 553));
+//console.log("НОД(521, 553) =", NOD2(521, 553));
 
-console.log("НОД(5252, 6767, 4242) =", NOD3(5252, 6767, 4242));
+//console.log("НОД(5252, 6767, 4242) =", NOD3(5252, 6767, 4242));
 
-console.log("Простые числа от 521 до 553:");
-console.log(findPrimesInRange(521, 553));
-console.log("Простые числа от 3 до 553:");
-console.log(findPrimesInRange(3, 553));
+//console.log("Простые числа от 521 до 553:");
+console.log(findPrimesInRange(2**255,2**256));
+//console.log("Простые числа от 3 до 553:");
+//console.log(findPrimesInRange(3, 553));

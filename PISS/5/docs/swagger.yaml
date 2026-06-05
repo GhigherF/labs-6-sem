@@ -1,0 +1,161 @@
+basePath: /
+definitions:
+  main.Celebrity:
+    properties:
+      fullName:
+        type: string
+      id:
+        type: integer
+      nationality:
+        type: string
+      reqPhotoPath:
+        type: string
+    type: object
+host: localhost:2280
+info:
+  contact: {}
+  description: API для управления знаменитостями
+  title: Celebrities API
+  version: "1.0"
+paths:
+  /celebrities:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую знаменитость
+      parameters:
+      - description: Celebrity object
+        in: body
+        name: celebrity
+        required: true
+        schema:
+          $ref: '#/definitions/main.Celebrity'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/main.Celebrity'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Создать знаменитость
+      tags:
+      - celebrities
+  /celebrities/{id}:
+    delete:
+      description: Удаляет знаменитость по id
+      parameters:
+      - description: ID знаменитости
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Удалить знаменитость
+      tags:
+      - celebrities
+    get:
+      description: Возвращает одну знаменитость
+      parameters:
+      - description: ID знаменитости
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Celebrity'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Получить знаменитость по id
+      tags:
+      - celebrities
+    put:
+      consumes:
+      - application/json
+      description: Обновляет знаменитость по id
+      parameters:
+      - description: ID знаменитости
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Celebrity object
+        in: body
+        name: celebrity
+        required: true
+        schema:
+          $ref: '#/definitions/main.Celebrity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Celebrity'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Обновить знаменитость
+      tags:
+      - celebrities
+  /celebrities/all:
+    get:
+      description: Возвращает список всех знаменитостей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.Celebrity'
+            type: array
+      summary: Получить всех знаменитостей
+      tags:
+      - celebrities
+swagger: "2.0"

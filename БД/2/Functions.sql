@@ -96,8 +96,7 @@ order by grup
 ---------------5-------------------
 go
 CREATE OR ALTER FUNCTION teachersCountByPulpits(@faculty NVARCHAR(20))
-RETURNS TABLE
-AS
+RETURNS TABLE AS
 RETURN
     SELECT p.pulpit, COUNT(t.teacher_id) AS Teachers
     FROM teachers t
@@ -111,3 +110,17 @@ GO
 SELECT * FROM dbo.teachersCountByPulpits('ИТ');
 GO
 
+--------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+----------------------NEW-----------------------------
+-------------------------------------------------------
+go
+
+CREATE OR ALTER FUNCTION teachersByOverload(@subjects INT) RETURNS TABLE
+AS RETURN 
+   SELECT teacher, COUNT(subject_teacher.subject_id) AS subject_count
+   FROM teachers INNER JOIN subject_teacher ON teachers.teacher_id = subject_teacher.teacher_id
+    GROUP BY teachers.teacher HAVING COUNT(subject_teacher.subject_id) > @subjects
+
+select * from dbo.teachersByOverload(2)
